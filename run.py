@@ -5,7 +5,7 @@ import speech_recognition as sr
 
 k = PyKeyboard()
 
-r = sr.Recognizer("en-US")
+r = sr.Recognizer("en-IN")
 m = sr.Microphone()
 r.pause_threshold = 0.5
 
