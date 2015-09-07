@@ -8,7 +8,66 @@
 
 
 
-value = "I have to go to gym at 5:30 p.m. remind me"
+# Alarm Class
+
+
+import time
+import threading
+from gtts import gTTS
+import subprocess
+
+class Alarm(threading.Thread):
+
+    def __init__(self, hours, minutes, content):
+        super(Alarm, self).__init__()
+        self.hours = int(hours)
+        self.minutes = int(minutes)
+	self.content = str(content)
+        self.keep_running = True
+        from gtts import gTTS
+        import subprocess
+
+    def run(self):
+        try :
+            while self.keep_running:
+                now = time.localtime()
+                if (now.tm_hour == self.hours and now.tm_min == self.minutes):
+		    tts = gTTS(text=self.content,lang='en')
+		    tts.save("Speak.mp3")
+		    subprocess.Popen('play Speak.mp3',shell=True)
+                    return
+            time.sleep(5)
+	except :
+	    return		        
+    def just_die(self):
+        self.keep_running = False
+
+
+
+def t12Tot24(timeString, timeSuffix):
+
+	""" Converts 12h mode to 24h mode when necessary"""
+	if (timeSuffix == 'hours'):
+		alarm_HH = timeString[:(len(timeString)-2)]
+		alarm_MM = timeString[(len(timeString)-2):(len(timeString))]
+		return (alarm_HH, alarm_MM)
+
+	elif (timeSuffix == 'a.m.'):
+		tWords = timeString.split(':')
+		alarm_HH = tWords[0]
+		alarm_MM = tWords[1]
+		return (alarm_HH, alarm_MM)
+		
+	elif (timeSuffix == 'p.m.'):
+		tWords = timeString.split(':')
+		alarm_HH = int(tWords[0]) + 12
+		alarm_MM = int(tWords[1])
+		return (alarm_HH, alarm_MM)
+
+
+
+
+value = "I have to go to gym at 10:09 p.m. remind me"
 words = value.split()
 
 # Lists of keywords 
@@ -26,17 +85,14 @@ if (not(value.isdigit()) and not(value.isalpha())):
 	for word in timeList :
 		temp = max(0,(value.find(word)))
 		timeval = timeval or temp
-	#timeval = (max(0,(value.find('a.m.')))or (max(0,value.find('p.m.'))) or (max(0,value.find('hours'))))
 	#Keywords for reminder, NLP
 	for word in reminderList :
 		temp = max(0,(value.find(word)))
 		reminderval = reminderval or temp
-	#reminderval = (max(0,value.find('remind'))) or (max(0,value.find('notify'))) 
 	#Keywords for setting an alarm, NLP
 	for word in alarmList :
 		temp = max(0,(value.find(word)))
 		alarmval = alarmval or temp
-	#alarmval = (max(0,value.find('alarm'))) or (max(0,value.find('wake'))) 
 
 	# Truth values established at this point, lets extract the parameters and map it to respective functions. 
 
@@ -49,6 +105,21 @@ if (not(value.isdigit()) and not(value.isalpha())):
 				timeIndex = words.index(word)
 			except :
 				pass
+
+		# Understand OOP --> Rahul, postponed.
+		# Implementing time patch.
 		timeString = words[timeIndex -1]
-		print timeString+' '+words[timeIndex]
+		timeSuffix = words[timeIndex]
+		(alarm_HH, alarm_MM) = t12Tot24(timeString, timeSuffix)
+		print (alarm_HH, alarm_MM)
+
+		# Extract content for alarm/Scheduler
+		content = 'No Not that!' 
+
+		# Non blocking, independent processes. 
+		alarm = Alarm(alarm_HH, alarm_MM, content)
+		alarm.start()
+
+		
+		
 				
