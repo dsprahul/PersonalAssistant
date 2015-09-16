@@ -114,6 +114,7 @@ if (not(value.isdigit()) and not(value.isalpha())):
 		print (alarm_HH, alarm_MM)
 
 		# Extract content for alarm/Scheduler
+		# Rahul, get rid off prepositions from 'content'
 		content = 'No Not that!' 
 
 		# Non blocking, independent processes. 
