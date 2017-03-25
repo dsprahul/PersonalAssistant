@@ -34,15 +34,9 @@ with m as source:
 				print ("What do you wanna listen?")
 			elif (value == 'search in music'):
 				k.type_string('.')
-				
-				
 			else:
 				k.type_string(value)
 				k.tap_key('Return')
-		    	
-
-
-
 	        except LookupError:
 	            print(" ... Gave up! ...")
 
